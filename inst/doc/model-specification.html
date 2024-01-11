@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Oliver Jayasinghe and Rex Parsons" />
+
+
+<title>model-specification</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">model-specification</h1>
+<h4 class="author">Oliver Jayasinghe and Rex Parsons</h4>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(GLMMcosinor)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
+<div id="cglmm" class="section level2">
+<h2><code>cglmm()</code></h2>
+<p><code>cglmm()</code> wrangles the data appropriately to fit the
+cosinor model given the formula specified by the user. It provides
+estimates of amplitude, acrophase, and MESOR (Midline Statistic Of
+Rhythm).</p>
+<p>The formula argument for <code>cglmm()</code> is specified using the
+<code>{lme4}</code> style (for details see
+<code>vignette(&quot;lmer&quot;, package = &quot;lme4&quot;)</code>). The only difference is
+that it allows for use of an <code>amp_acro()</code> call within the
+formula that is used to identify the circadian components and relevant
+variables in the <code>data.frame</code>. Any other combination of
+covariates can also be included in the formula as well as random effects
+and zero-inflation (<code>ziformula</code>) and dispersion
+(<code>dispformula</code>) formulae. For detailed examples of how to
+specify models, see the <a href="https://ropensci.github.io/GLMMcosinor/articles/mixed-models.html">mixed-models</a>,
+<a href="https://ropensci.github.io/GLMMcosinor/articles/model-specification.html">model-specification</a>
+and <a href="https://ropensci.github.io/GLMMcosinor/articles/multiple-components.html">multiple-components</a>
+vignettes.</p>
+</div>
+<div id="using-cglmm" class="section level2">
+<h2>Using cglmm()</h2>
+<p>The following examples use data simulated by the the
+<code>simulate_cosinor</code> function.</p>
+<div id="specifying-a-single-component-model-with-no-grouping-variable" class="section level3">
+<h3>Specifying a single-component model with no grouping variable</h3>
+<p>Here, we fit a simple cosinor model to “testdata_simple” - simulated
+data from a Poisson distribution loaded in this vignette. In this
+example, there is no grouping variable.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>testdata_simple <span class="ot">&lt;-</span> <span class="fu">simulate_cosinor</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="dv">1000</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">n_period =</span> <span class="dv">2</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="at">mesor =</span> <span class="dv">5</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="at">amp =</span> <span class="dv">2</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="at">acro =</span> <span class="dv">1</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="at">beta.mesor =</span> <span class="dv">4</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="at">beta.amp =</span> <span class="dv">1</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>  <span class="at">beta.acro =</span> <span class="fl">0.5</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>  <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>  <span class="at">period =</span> <span class="fu">c</span>(<span class="dv">12</span>),</span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>  <span class="at">n_components =</span> <span class="dv">1</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>  <span class="at">beta.group =</span> <span class="cn">TRUE</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>object <span class="ot">&lt;-</span> <span class="fu">cglmm</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  Y <span class="sc">~</span> <span class="fu">amp_acro</span>(times,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    <span class="at">period =</span> <span class="dv">12</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  ),</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(testdata_simple, group <span class="sc">==</span> <span class="dv">0</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">poisson</span>()</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>)</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>object</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt;  Conditional Model </span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt;  Raw formula: </span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; Y ~ main_rrr1 + main_sss1 </span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt;  Raw Coefficients: </span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt;             Estimate</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; (Intercept)  4.99845</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; main_rrr1    1.08228</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; main_sss1    1.68235</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt;  Transformed Coefficients: </span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a><span class="co">#&gt;             Estimate</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="co">#&gt; (Intercept)  4.99845</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="co">#&gt; amp          2.00041</span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="co">#&gt; acr          0.99913</span></span></code></pre></div>
+<p>The output shows the estimates for the raw coefficients in addition
+to the transformed estimates for amplitude (amp) and acrophase (acr) and
+MESOR (<code>(Intercept)</code>). The previous section of this vignette:
+<a href="https://ropensci.github.io/GLMMcosinor/articles/GLMMcosinor.html#an-overview-of-the-statistical-methods-used-for-parameter-estimation">An
+overview of the statistical methods used for parameter estimation</a>
+outlines the difference between the raw coefficients and the transformed
+coefficients.</p>
+<p>We would interpret the output as follows:</p>
+<ul>
+<li><p><code>MESOR estimate = 4.99845</code></p></li>
+<li><p><code>Amplitude estimate = 1.08228</code></p></li>
+<li><p><code>Acrophase estimate = 0.99913</code></p></li>
+</ul>
+<p>Note that this estimate is in radians to align with conventions. To
+interpret this, we can express <code>0.99913 radians</code> as a
+fraction of the total <span class="math inline">\(2\pi\)</span> and
+multiply by the period to get the time when the response is a maximal.
+Hence, <span class="math inline">\(\frac{0.99913}{2\pi} \times 12 =
+1.908\)</span> in the units of the <code>time_col</code> column in the
+original dataframe. This is saying that the peak response would occur
+after 1.908 time-units and every 12 time-units after this. We can
+confirm this by plotting:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">autoplot</span>(object, <span class="at">superimpose.data =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="specifying-a-single-component-model-with-a-grouping-variable-and-a-shared-mesor" class="section level3">
+<h3>Specifying a single-component model with a grouping variable and a
+shared MESOR</h3>
+<p>Now, we can add a grouping variable by adding the name of the group
+in the <code>amp_acro()</code> function:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>testdata_simple_gaussian <span class="ot">&lt;-</span> <span class="fu">simulate_cosinor</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="dv">1000</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">n_period =</span> <span class="dv">2</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="at">mesor =</span> <span class="dv">5</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="at">amp =</span> <span class="dv">2</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="at">acro =</span> <span class="dv">1</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="at">beta.mesor =</span> <span class="dv">4</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="at">beta.amp =</span> <span class="dv">1</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="at">beta.acro =</span> <span class="fl">0.5</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  <span class="at">family =</span> <span class="st">&quot;gaussian&quot;</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>  <span class="at">period =</span> <span class="fu">c</span>(<span class="dv">12</span>),</span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>  <span class="at">n_components =</span> <span class="dv">1</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>  <span class="at">beta.group =</span> <span class="cn">TRUE</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>object <span class="ot">&lt;-</span> <span class="fu">cglmm</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  Y <span class="sc">~</span> <span class="fu">amp_acro</span>(times,</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">period =</span> <span class="dv">12</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="at">group =</span> <span class="st">&quot;group&quot;</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  ),</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="at">data =</span> testdata_simple_gaussian,</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="at">family =</span> gaussian</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>)</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>object</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt;  Conditional Model </span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt;  Raw formula: </span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt; Y ~ group:main_rrr1 + group:main_sss1 </span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt;  Raw Coefficients: </span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt;                  Estimate</span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#&gt; (Intercept)       4.47411</span></span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr1  1.03269</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr1  0.90210</span></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co">#&gt; group0:main_sss1  1.67745</span></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co">#&gt; group1:main_sss1  0.48497</span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a><span class="co">#&gt;  Transformed Coefficients: </span></span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a><span class="co">#&gt;               Estimate</span></span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a><span class="co">#&gt; (Intercept)    4.47411</span></span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp  1.96985</span></span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp  1.02419</span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr  1.01896</span></span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr  0.49327</span></span></code></pre></div>
+<p>In the example above, the amplitude and phase are being estimated
+separately for the two groups but the <strong>intercept term is
+shared</strong>. This represents a shared estimate of the MESOR for both
+groups and is useful if two groups are known to have a common baseline
+(or equilibrium point). Hence, we would interpret the transformed
+coefficients as follows:</p>
+<ul>
+<li><p>The MESOR estimate is 4.47411 for both <code>group = 0</code> and
+<code>group = 1</code>.</p></li>
+<li><p>The estimates for amplitude and acrophase are with reference to
+the a MESOR estimate of 4.47411</p></li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">autoplot</span>(object)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>However, the groups in this dataset were simulated with two different
+MESORs, and so it would be more appropriate to specify an intercept term
+in the formula, as this will estimate the MESOR for both
+<code>group = 0</code> and <code>group = 1</code>:</p>
+</div>
+<div id="specifying-a-single-component-model-with-a-grouping-variable-and-an-intercept-mesor" class="section level3">
+<h3>Specifying a single-component model with a grouping variable and an
+intercept (MESOR)</h3>
+<p>Similarly to a normal regression model with <code>{lme4}</code> or
+<code>{glmmTMB}</code>, we can add a term for the group in the model so
+that we can estimate the <strong>difference in MESOR</strong> between
+the two groups.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>object <span class="ot">&lt;-</span> <span class="fu">cglmm</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  Y <span class="sc">~</span> group <span class="sc">+</span> <span class="fu">amp_acro</span>(times,</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    <span class="at">period =</span> <span class="dv">12</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>    <span class="at">group =</span> <span class="st">&quot;group&quot;</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  ),</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="at">data =</span> testdata_simple_gaussian,</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">gaussian</span>()</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>)</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>object</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co">#&gt;  Conditional Model </span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt;  Raw formula: </span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co">#&gt; Y ~ group + group:main_rrr1 + group:main_sss1 </span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt;  Raw Coefficients: </span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt;                  Estimate</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; (Intercept)       4.96476</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co">#&gt; group1           -0.98129</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr1  1.04667</span></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr1  0.88812</span></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a><span class="co">#&gt; group0:main_sss1  1.68266</span></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a><span class="co">#&gt; group1:main_sss1  0.47976</span></span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a><span class="co">#&gt;  Transformed Coefficients: </span></span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a><span class="co">#&gt;               Estimate</span></span>
+<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a><span class="co">#&gt; (Intercept)    4.96476</span></span>
+<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a><span class="co">#&gt; [group=1]     -0.98129</span></span>
+<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp  1.98163</span></span>
+<span id="cb8-30"><a href="#cb8-30" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp  1.00942</span></span>
+<span id="cb8-31"><a href="#cb8-31" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr  1.01433</span></span>
+<span id="cb8-32"><a href="#cb8-32" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr  0.49529</span></span></code></pre></div>
+<p>This is the same dataset used in the previous example, but note the
+following differences:</p>
+<ul>
+<li><p>The MESOR estimate for the reference group
+(<code>group = 0</code>) is given by
+<code>(Intercept) = 4.96476</code></p></li>
+<li><p>The estimate for the difference between the MESOR of the
+reference group (<code>group = 0</code>) and the treatment group
+(<code>group = 1</code>) is given by <code>[group=1] = -0.98129</code>.
+As such, the estimate for the MESOR of <code>group = 1</code> is
+<code>3.98347</code>.</p></li>
+<li><p>The estimates for amplitude and acrophase are slightly different
+to the previous example because there is no longer a shared
+MESOR.</p></li>
+</ul>
+<p>Plotting this model and comparing to the previous model which used
+the same dataset, one can appreciate the importance of specifying the
+formula correctly in order to gain the most accurate model.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">autoplot</span>(object)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>We may also be interested in estimating the MESOR for the two groups
+separately, rather than the difference between groups. To achieve this,
+we can remove the intercept term by using <code>0 +</code>.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">cglmm</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  Y <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> group <span class="sc">+</span> <span class="fu">amp_acro</span>(times,</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>    <span class="at">period =</span> <span class="dv">12</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>    <span class="at">group =</span> <span class="st">&quot;group&quot;</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  ),</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>  <span class="at">data =</span> testdata_simple,</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">poisson</span>()</span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>)</span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co">#&gt;  Conditional Model </span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co">#&gt;  Raw formula: </span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co">#&gt; Y ~ group + group:main_rrr1 + group:main_sss1 - 1 </span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt;  Raw Coefficients: </span></span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="co">#&gt;                  Estimate</span></span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#&gt; group0            4.99845</span></span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a><span class="co">#&gt; group1            3.99631</span></span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr1  1.08228</span></span>
+<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr1  0.87665</span></span>
+<span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a><span class="co">#&gt; group0:main_sss1  1.68235</span></span>
+<span id="cb10-22"><a href="#cb10-22" tabindex="-1"></a><span class="co">#&gt; group1:main_sss1  0.48195</span></span>
+<span id="cb10-23"><a href="#cb10-23" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-24"><a href="#cb10-24" tabindex="-1"></a><span class="co">#&gt;  Transformed Coefficients: </span></span>
+<span id="cb10-25"><a href="#cb10-25" tabindex="-1"></a><span class="co">#&gt;               Estimate</span></span>
+<span id="cb10-26"><a href="#cb10-26" tabindex="-1"></a><span class="co">#&gt; [group=0]      4.99845</span></span>
+<span id="cb10-27"><a href="#cb10-27" tabindex="-1"></a><span class="co">#&gt; [group=1]      3.99631</span></span>
+<span id="cb10-28"><a href="#cb10-28" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp  2.00041</span></span>
+<span id="cb10-29"><a href="#cb10-29" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp  1.00040</span></span>
+<span id="cb10-30"><a href="#cb10-30" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr  0.99913</span></span>
+<span id="cb10-31"><a href="#cb10-31" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr  0.50266</span></span></code></pre></div>
+</div>
+<div id="specifying-more-complicated-models-using-the-amp_acro-function" class="section level3">
+<h3>Specifying more complicated models using the <code>amp_acro()</code>
+function</h3>
+<p>The <code>amp_acro()</code> function controls the cosinor components
+of model (specifically, this affects just the fixed-effects part). It
+provides the user with the ability to specify grouping structures, the
+period of the rhythm, and the number of components. There are several
+arguments that the user must specify:</p>
+<ul>
+<li><p><code>group</code> is the name of the grouping variable in the
+dataset. This can be a string or an object</p></li>
+<li><p><code>time_col</code> is the name of the time column in the
+dataset. This can be a string or an object</p></li>
+<li><p><code>n_components</code> is the number of components.</p></li>
+</ul>
+<p>If the user wishes to fit a multicomponent cosinor model, they can
+specify the number of components using the <code>n_components</code>
+variable. The value of <code>n_components</code> will need to match the
+length of the <code>group</code> and <code>period</code> arguments as
+these will be combined for each component.</p>
+<p>For example:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>testdata_two_components <span class="ot">&lt;-</span> <span class="fu">simulate_cosinor</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="dv">1000</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="at">n_period =</span> <span class="dv">10</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  <span class="at">mesor =</span> <span class="dv">7</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="at">amp =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.4</span>),</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  <span class="at">acro =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">1.5</span>),</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  <span class="at">beta.mesor =</span> <span class="fl">4.4</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>  <span class="at">beta.amp =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>),</span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>  <span class="at">beta.acro =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="sc">-</span><span class="fl">1.5</span>),</span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>  <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>,</span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>  <span class="at">period =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">6</span>),</span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a>  <span class="at">n_components =</span> <span class="dv">2</span>,</span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a>  <span class="at">beta.group =</span> <span class="cn">TRUE</span></span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">cglmm</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  Y <span class="sc">~</span> group <span class="sc">+</span> <span class="fu">amp_acro</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>    <span class="at">time_col =</span> times,</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>    <span class="at">n_components =</span> <span class="dv">2</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>    <span class="at">period =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">6</span>),</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>    <span class="at">group =</span> <span class="fu">c</span>(<span class="st">&quot;group&quot;</span>, <span class="st">&quot;group&quot;</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>  ),</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>  <span class="at">data =</span> testdata_two_components,</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">poisson</span>()</span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>)</span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a><span class="co">#&gt;  Conditional Model </span></span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a><span class="co">#&gt;  Raw formula: </span></span>
+<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a><span class="co">#&gt; Y ~ group + group:main_rrr1 + group:main_sss1 + group:main_rrr2 +      group:main_sss2 </span></span>
+<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a><span class="co">#&gt;  Raw Coefficients: </span></span>
+<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a><span class="co">#&gt;                  Estimate</span></span>
+<span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a><span class="co">#&gt; (Intercept)       7.00043</span></span>
+<span id="cb12-20"><a href="#cb12-20" tabindex="-1"></a><span class="co">#&gt; group1           -2.60739</span></span>
+<span id="cb12-21"><a href="#cb12-21" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr1  0.05665</span></span>
+<span id="cb12-22"><a href="#cb12-22" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr1  1.08271</span></span>
+<span id="cb12-23"><a href="#cb12-23" tabindex="-1"></a><span class="co">#&gt; group0:main_sss1  0.08378</span></span>
+<span id="cb12-24"><a href="#cb12-24" tabindex="-1"></a><span class="co">#&gt; group1:main_sss1  1.68926</span></span>
+<span id="cb12-25"><a href="#cb12-25" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr2  0.02884</span></span>
+<span id="cb12-26"><a href="#cb12-26" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr2  0.07367</span></span>
+<span id="cb12-27"><a href="#cb12-27" tabindex="-1"></a><span class="co">#&gt; group0:main_sss2  0.39671</span></span>
+<span id="cb12-28"><a href="#cb12-28" tabindex="-1"></a><span class="co">#&gt; group1:main_sss2 -0.99891</span></span>
+<span id="cb12-29"><a href="#cb12-29" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-30"><a href="#cb12-30" tabindex="-1"></a><span class="co">#&gt;  Transformed Coefficients: </span></span>
+<span id="cb12-31"><a href="#cb12-31" tabindex="-1"></a><span class="co">#&gt;                Estimate</span></span>
+<span id="cb12-32"><a href="#cb12-32" tabindex="-1"></a><span class="co">#&gt; (Intercept)     7.00043</span></span>
+<span id="cb12-33"><a href="#cb12-33" tabindex="-1"></a><span class="co">#&gt; [group=1]      -2.60739</span></span>
+<span id="cb12-34"><a href="#cb12-34" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp1  0.10113</span></span>
+<span id="cb12-35"><a href="#cb12-35" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp1  2.00645</span></span>
+<span id="cb12-36"><a href="#cb12-36" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp2  0.39776</span></span>
+<span id="cb12-37"><a href="#cb12-37" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp2  1.00162</span></span>
+<span id="cb12-38"><a href="#cb12-38" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr1  0.97625</span></span>
+<span id="cb12-39"><a href="#cb12-39" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr1  1.00082</span></span>
+<span id="cb12-40"><a href="#cb12-40" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr2  1.49824</span></span>
+<span id="cb12-41"><a href="#cb12-41" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr2 -1.49718</span></span></code></pre></div>
+<p>In the output, the suffix on the estimates for amplitude and
+acrophase represents its component:</p>
+<ul>
+<li><p><code>[group=0]:amp1 = 0.10113</code> represents the estimate for
+amplitude of <code>group 0</code> for the first component</p></li>
+<li><p><code>[group=1]:amp1 = 2.00645</code> represents the estimate for
+amplitude of <code>group 1</code> for the first component</p></li>
+<li><p><code>[group=0]:amp2 = 0.39776</code> represents the estimate for
+amplitude of <code>group 0</code> for the second component</p></li>
+<li><p><code>[group=1]:amp2 = 1.00162</code> represents the estimate for
+amplitude of <code>group 1</code> for the second component</p></li>
+<li><p><em>Similarly for acrophase estimates</em></p></li>
+</ul>
+<p>If a multicomponent model has one component that is grouped with
+other components that aren’t, the vector input for <code>group</code>
+must still be the same length as <code>n_components</code> but have the
+non-grouped components represented as <code>group = NA</code>.</p>
+<p>For example, if we wanted only the first component to have a grouped
+component, we would specify the <code>group</code> argument as
+<code>group = c(&quot;group&quot;, NA))</code>.</p>
+<p>For a detailed explanation of how to specify multi-component models,
+see <a href="https://ropensci.github.io/GLMMcosinor/articles/multiple-components.html">multiple-components</a></p>
+</div>
+<div id="dispersion-and-zero-inflation-model-specification" class="section level3">
+<h3>Dispersion and zero-inflation model specification</h3>
+<p>The <code>cglmm()</code> function allows users to specify formulas
+for dispersion and zero-inflation models. These formulas are independent
+of the main formula specification:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>testdata_disp_zi <span class="ot">&lt;-</span> <span class="fu">simulate_cosinor</span>(<span class="dv">1000</span>,</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="at">n_period =</span> <span class="dv">6</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="at">mesor =</span> <span class="dv">7</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>  <span class="at">amp =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.4</span>, <span class="fl">0.5</span>),</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>  <span class="at">acro =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">1.5</span>, <span class="fl">0.1</span>),</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>  <span class="at">beta.mesor =</span> <span class="fl">4.4</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>  <span class="at">beta.amp =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="fl">0.4</span>),</span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>  <span class="at">beta.acro =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="sc">-</span><span class="fl">1.5</span>, <span class="sc">-</span><span class="dv">1</span>),</span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>  <span class="at">family =</span> <span class="st">&quot;gaussian&quot;</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a>  <span class="at">period =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">6</span>, <span class="dv">8</span>),</span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a>  <span class="at">n_components =</span> <span class="dv">3</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a>)</span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a>object_disp_zi <span class="ot">&lt;-</span> <span class="fu">cglmm</span>(</span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a>  Y <span class="sc">~</span> group <span class="sc">+</span> <span class="fu">amp_acro</span>(times,</span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a>    <span class="at">n_components =</span> <span class="dv">3</span>,</span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a>    <span class="at">period =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">6</span>, <span class="dv">8</span>),</span>
+<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a>    <span class="at">group =</span> <span class="st">&quot;group&quot;</span></span>
+<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a>  ),</span>
+<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a>  <span class="at">data =</span> testdata_disp_zi, <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
+<span id="cb13-20"><a href="#cb13-20" tabindex="-1"></a>  <span class="at">dispformula =</span> <span class="sc">~</span> group <span class="sc">+</span> <span class="fu">amp_acro</span>(times,</span>
+<span id="cb13-21"><a href="#cb13-21" tabindex="-1"></a>    <span class="at">n_components =</span> <span class="dv">2</span>,</span>
+<span id="cb13-22"><a href="#cb13-22" tabindex="-1"></a>    <span class="at">group =</span> <span class="st">&quot;group&quot;</span>,</span>
+<span id="cb13-23"><a href="#cb13-23" tabindex="-1"></a>    <span class="at">period =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">6</span>)</span>
+<span id="cb13-24"><a href="#cb13-24" tabindex="-1"></a>  ),</span>
+<span id="cb13-25"><a href="#cb13-25" tabindex="-1"></a>  <span class="at">ziformula =</span> <span class="sc">~</span> group <span class="sc">+</span> <span class="fu">amp_acro</span>(times,</span>
+<span id="cb13-26"><a href="#cb13-26" tabindex="-1"></a>    <span class="at">n_components =</span> <span class="dv">3</span>,</span>
+<span id="cb13-27"><a href="#cb13-27" tabindex="-1"></a>    <span class="at">group =</span> <span class="st">&quot;group&quot;</span>,</span>
+<span id="cb13-28"><a href="#cb13-28" tabindex="-1"></a>    <span class="at">period =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">2</span>)</span>
+<span id="cb13-29"><a href="#cb13-29" tabindex="-1"></a>  )</span>
+<span id="cb13-30"><a href="#cb13-30" tabindex="-1"></a>)</span>
+<span id="cb13-31"><a href="#cb13-31" tabindex="-1"></a></span>
+<span id="cb13-32"><a href="#cb13-32" tabindex="-1"></a>object_disp_zi</span>
+<span id="cb13-33"><a href="#cb13-33" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-34"><a href="#cb13-34" tabindex="-1"></a><span class="co">#&gt;  Conditional Model </span></span>
+<span id="cb13-35"><a href="#cb13-35" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-36"><a href="#cb13-36" tabindex="-1"></a><span class="co">#&gt;  Raw formula: </span></span>
+<span id="cb13-37"><a href="#cb13-37" tabindex="-1"></a><span class="co">#&gt; Y ~ group + group:main_rrr1 + group:main_sss1 + group:main_rrr2 +      group:main_sss2 + group:main_rrr3 + group:main_sss3 </span></span>
+<span id="cb13-38"><a href="#cb13-38" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-39"><a href="#cb13-39" tabindex="-1"></a><span class="co">#&gt;  Raw Coefficients: </span></span>
+<span id="cb13-40"><a href="#cb13-40" tabindex="-1"></a><span class="co">#&gt;                  Estimate</span></span>
+<span id="cb13-41"><a href="#cb13-41" tabindex="-1"></a><span class="co">#&gt; (Intercept)       7.01421</span></span>
+<span id="cb13-42"><a href="#cb13-42" tabindex="-1"></a><span class="co">#&gt; group1           -2.57831</span></span>
+<span id="cb13-43"><a href="#cb13-43" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr1  0.07796</span></span>
+<span id="cb13-44"><a href="#cb13-44" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr1  1.08697</span></span>
+<span id="cb13-45"><a href="#cb13-45" tabindex="-1"></a><span class="co">#&gt; group0:main_sss1  0.11443</span></span>
+<span id="cb13-46"><a href="#cb13-46" tabindex="-1"></a><span class="co">#&gt; group1:main_sss1  1.69632</span></span>
+<span id="cb13-47"><a href="#cb13-47" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr2  0.08871</span></span>
+<span id="cb13-48"><a href="#cb13-48" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr2  0.09434</span></span>
+<span id="cb13-49"><a href="#cb13-49" tabindex="-1"></a><span class="co">#&gt; group0:main_sss2  0.44577</span></span>
+<span id="cb13-50"><a href="#cb13-50" tabindex="-1"></a><span class="co">#&gt; group1:main_sss2 -1.02200</span></span>
+<span id="cb13-51"><a href="#cb13-51" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr3  0.57312</span></span>
+<span id="cb13-52"><a href="#cb13-52" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr3  0.17853</span></span>
+<span id="cb13-53"><a href="#cb13-53" tabindex="-1"></a><span class="co">#&gt; group0:main_sss3 -0.00725</span></span>
+<span id="cb13-54"><a href="#cb13-54" tabindex="-1"></a><span class="co">#&gt; group1:main_sss3 -0.32673</span></span>
+<span id="cb13-55"><a href="#cb13-55" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-56"><a href="#cb13-56" tabindex="-1"></a><span class="co">#&gt;  Transformed Coefficients: </span></span>
+<span id="cb13-57"><a href="#cb13-57" tabindex="-1"></a><span class="co">#&gt;                Estimate</span></span>
+<span id="cb13-58"><a href="#cb13-58" tabindex="-1"></a><span class="co">#&gt; (Intercept)     7.01421</span></span>
+<span id="cb13-59"><a href="#cb13-59" tabindex="-1"></a><span class="co">#&gt; [group=1]      -2.57831</span></span>
+<span id="cb13-60"><a href="#cb13-60" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp1  0.13847</span></span>
+<span id="cb13-61"><a href="#cb13-61" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp1  2.01470</span></span>
+<span id="cb13-62"><a href="#cb13-62" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp2  0.45451</span></span>
+<span id="cb13-63"><a href="#cb13-63" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp2  1.02635</span></span>
+<span id="cb13-64"><a href="#cb13-64" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp3  0.57317</span></span>
+<span id="cb13-65"><a href="#cb13-65" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp3  0.37232</span></span>
+<span id="cb13-66"><a href="#cb13-66" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr1  0.97277</span></span>
+<span id="cb13-67"><a href="#cb13-67" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr1  1.00093</span></span>
+<span id="cb13-68"><a href="#cb13-68" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr2  1.37437</span></span>
+<span id="cb13-69"><a href="#cb13-69" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr2 -1.47875</span></span>
+<span id="cb13-70"><a href="#cb13-70" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr3 -0.01265</span></span>
+<span id="cb13-71"><a href="#cb13-71" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr3 -1.07072</span></span>
+<span id="cb13-72"><a href="#cb13-72" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-73"><a href="#cb13-73" tabindex="-1"></a><span class="co">#&gt; ***********************</span></span>
+<span id="cb13-74"><a href="#cb13-74" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-75"><a href="#cb13-75" tabindex="-1"></a><span class="co">#&gt;  Dispersion Model </span></span>
+<span id="cb13-76"><a href="#cb13-76" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-77"><a href="#cb13-77" tabindex="-1"></a><span class="co">#&gt;  Raw  Formula: </span></span>
+<span id="cb13-78"><a href="#cb13-78" tabindex="-1"></a><span class="co">#&gt; ~group + group:disp_rrr1 + group:disp_sss1 + group:disp_rrr2 +      group:disp_sss2 </span></span>
+<span id="cb13-79"><a href="#cb13-79" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-80"><a href="#cb13-80" tabindex="-1"></a><span class="co">#&gt;  Raw  Coefficients: </span></span>
+<span id="cb13-81"><a href="#cb13-81" tabindex="-1"></a><span class="co">#&gt;                  Estimate</span></span>
+<span id="cb13-82"><a href="#cb13-82" tabindex="-1"></a><span class="co">#&gt; (Intercept)      -0.03676</span></span>
+<span id="cb13-83"><a href="#cb13-83" tabindex="-1"></a><span class="co">#&gt; group1            0.11295</span></span>
+<span id="cb13-84"><a href="#cb13-84" tabindex="-1"></a><span class="co">#&gt; group0:disp_rrr1  0.02301</span></span>
+<span id="cb13-85"><a href="#cb13-85" tabindex="-1"></a><span class="co">#&gt; group1:disp_rrr1  0.10834</span></span>
+<span id="cb13-86"><a href="#cb13-86" tabindex="-1"></a><span class="co">#&gt; group0:disp_sss1 -0.11044</span></span>
+<span id="cb13-87"><a href="#cb13-87" tabindex="-1"></a><span class="co">#&gt; group1:disp_sss1 -0.01199</span></span>
+<span id="cb13-88"><a href="#cb13-88" tabindex="-1"></a><span class="co">#&gt; group0:disp_rrr2  0.00271</span></span>
+<span id="cb13-89"><a href="#cb13-89" tabindex="-1"></a><span class="co">#&gt; group1:disp_rrr2 -0.00304</span></span>
+<span id="cb13-90"><a href="#cb13-90" tabindex="-1"></a><span class="co">#&gt; group0:disp_sss2  0.02432</span></span>
+<span id="cb13-91"><a href="#cb13-91" tabindex="-1"></a><span class="co">#&gt; group1:disp_sss2  0.00734</span></span>
+<span id="cb13-92"><a href="#cb13-92" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-93"><a href="#cb13-93" tabindex="-1"></a><span class="co">#&gt;  Transformed  Coefficients: </span></span>
+<span id="cb13-94"><a href="#cb13-94" tabindex="-1"></a><span class="co">#&gt;                Estimate</span></span>
+<span id="cb13-95"><a href="#cb13-95" tabindex="-1"></a><span class="co">#&gt; (Intercept)    -0.03676</span></span>
+<span id="cb13-96"><a href="#cb13-96" tabindex="-1"></a><span class="co">#&gt; [group=1]       0.11295</span></span>
+<span id="cb13-97"><a href="#cb13-97" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp1  0.11282</span></span>
+<span id="cb13-98"><a href="#cb13-98" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp1  0.10900</span></span>
+<span id="cb13-99"><a href="#cb13-99" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp2  0.02447</span></span>
+<span id="cb13-100"><a href="#cb13-100" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp2  0.00795</span></span>
+<span id="cb13-101"><a href="#cb13-101" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr1 -1.36541</span></span>
+<span id="cb13-102"><a href="#cb13-102" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr1 -0.11024</span></span>
+<span id="cb13-103"><a href="#cb13-103" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr2  1.45972</span></span>
+<span id="cb13-104"><a href="#cb13-104" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr2  1.96369</span></span>
+<span id="cb13-105"><a href="#cb13-105" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-106"><a href="#cb13-106" tabindex="-1"></a><span class="co">#&gt; ***********************</span></span>
+<span id="cb13-107"><a href="#cb13-107" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-108"><a href="#cb13-108" tabindex="-1"></a><span class="co">#&gt;  Zero-Inflation Model </span></span>
+<span id="cb13-109"><a href="#cb13-109" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-110"><a href="#cb13-110" tabindex="-1"></a><span class="co">#&gt;  Raw  Formula: </span></span>
+<span id="cb13-111"><a href="#cb13-111" tabindex="-1"></a><span class="co">#&gt; ~group + group:zi_rrr1 + group:zi_sss1 + group:zi_rrr2 + group:zi_sss2 +      group:zi_rrr3 + group:zi_sss3 </span></span>
+<span id="cb13-112"><a href="#cb13-112" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-113"><a href="#cb13-113" tabindex="-1"></a><span class="co">#&gt;  Raw  Coefficients: </span></span>
+<span id="cb13-114"><a href="#cb13-114" tabindex="-1"></a><span class="co">#&gt;                 Estimate</span></span>
+<span id="cb13-115"><a href="#cb13-115" tabindex="-1"></a><span class="co">#&gt; (Intercept)    -22.66473</span></span>
+<span id="cb13-116"><a href="#cb13-116" tabindex="-1"></a><span class="co">#&gt; group1          -0.40422</span></span>
+<span id="cb13-117"><a href="#cb13-117" tabindex="-1"></a><span class="co">#&gt; group0:zi_rrr1  -0.01398</span></span>
+<span id="cb13-118"><a href="#cb13-118" tabindex="-1"></a><span class="co">#&gt; group1:zi_rrr1   0.01343</span></span>
+<span id="cb13-119"><a href="#cb13-119" tabindex="-1"></a><span class="co">#&gt; group0:zi_sss1  -0.03633</span></span>
+<span id="cb13-120"><a href="#cb13-120" tabindex="-1"></a><span class="co">#&gt; group1:zi_sss1   0.03755</span></span>
+<span id="cb13-121"><a href="#cb13-121" tabindex="-1"></a><span class="co">#&gt; group0:zi_rrr2   0.01578</span></span>
+<span id="cb13-122"><a href="#cb13-122" tabindex="-1"></a><span class="co">#&gt; group1:zi_rrr2  -0.01425</span></span>
+<span id="cb13-123"><a href="#cb13-123" tabindex="-1"></a><span class="co">#&gt; group0:zi_sss2  -0.01775</span></span>
+<span id="cb13-124"><a href="#cb13-124" tabindex="-1"></a><span class="co">#&gt; group1:zi_sss2   0.01930</span></span>
+<span id="cb13-125"><a href="#cb13-125" tabindex="-1"></a><span class="co">#&gt; group0:zi_rrr3  -0.00562</span></span>
+<span id="cb13-126"><a href="#cb13-126" tabindex="-1"></a><span class="co">#&gt; group1:zi_rrr3   0.00604</span></span>
+<span id="cb13-127"><a href="#cb13-127" tabindex="-1"></a><span class="co">#&gt; group0:zi_sss3  -0.00178</span></span>
+<span id="cb13-128"><a href="#cb13-128" tabindex="-1"></a><span class="co">#&gt; group1:zi_sss3   0.00167</span></span>
+<span id="cb13-129"><a href="#cb13-129" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-130"><a href="#cb13-130" tabindex="-1"></a><span class="co">#&gt;  Transformed  Coefficients: </span></span>
+<span id="cb13-131"><a href="#cb13-131" tabindex="-1"></a><span class="co">#&gt;                 Estimate</span></span>
+<span id="cb13-132"><a href="#cb13-132" tabindex="-1"></a><span class="co">#&gt; (Intercept)    -22.66473</span></span>
+<span id="cb13-133"><a href="#cb13-133" tabindex="-1"></a><span class="co">#&gt; [group=1]       -0.40422</span></span>
+<span id="cb13-134"><a href="#cb13-134" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp1   0.03892</span></span>
+<span id="cb13-135"><a href="#cb13-135" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp1   0.03988</span></span>
+<span id="cb13-136"><a href="#cb13-136" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp2   0.02375</span></span>
+<span id="cb13-137"><a href="#cb13-137" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp2   0.02399</span></span>
+<span id="cb13-138"><a href="#cb13-138" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp3   0.00590</span></span>
+<span id="cb13-139"><a href="#cb13-139" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp3   0.00626</span></span>
+<span id="cb13-140"><a href="#cb13-140" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr1  -1.93816</span></span>
+<span id="cb13-141"><a href="#cb13-141" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr1   1.22741</span></span>
+<span id="cb13-142"><a href="#cb13-142" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr2  -0.84411</span></span>
+<span id="cb13-143"><a href="#cb13-143" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr2   2.20682</span></span>
+<span id="cb13-144"><a href="#cb13-144" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr3  -2.83427</span></span>
+<span id="cb13-145"><a href="#cb13-145" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr3   0.26946</span></span></code></pre></div>
+<p>The output provides estimates for conditional model (default model),
+the dispersion model, and also the zero-inflation model. By default,
+<code>dispformula = ~1</code>, and <code>ziformula = ~0</code> which
+means these additional models will not be generated in the output.</p>
+<p><em>Note that in the example above, the value for the periods and the
+number of components in the dispersion and zero-inflation formulas were
+chosen arbitrarily and purely for demonstration.</em></p>
+</div>
+</div>
+<div id="using-summarycglmm" class="section level2">
+<h2>Using: ‘summary(cglmm)’</h2>
+<p>The <code>summary()</code> method for <code>cglmm</code> objects
+provides a more detailed summary of the model and its parameter
+estimates and uncertainty. It outputs the estimates, standard errors,
+confidence intervals, and <span class="math inline">\(p\)</span>-values
+for both the raw model parameters and the transformed parameters. The
+summary statistics do not represent a comparison between any groups for
+the cosinor components - that is the role of the
+<code>test_cosinor()</code> function.</p>
+<p>Here is an example of how to use <code>summary()</code>:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>object <span class="ot">&lt;-</span> <span class="fu">cglmm</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  Y <span class="sc">~</span> group <span class="sc">+</span> <span class="fu">amp_acro</span>(times,</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>    <span class="at">period =</span> <span class="dv">12</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>    <span class="at">group =</span> <span class="st">&quot;group&quot;</span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>  ),</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>  <span class="at">data =</span> testdata_simple,</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">poisson</span>()</span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>)</span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="fu">summary</span>(object)</span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co">#&gt;  Conditional Model </span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a><span class="co">#&gt; Raw model coefficients:</span></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a><span class="co">#&gt;                      estimate standard.error     lower.CI upper.CI    p.value</span></span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a><span class="co">#&gt; (Intercept)       4.998454142    0.003463730  4.991665356  5.00524 &lt; 2.22e-16</span></span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a><span class="co">#&gt; group1           -1.002150001    0.005937109 -1.013786521 -0.99051 &lt; 2.22e-16</span></span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr1  1.082281784    0.003347565  1.075720677  1.08884 &lt; 2.22e-16</span></span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr1  0.876651963    0.006198710  0.864502714  0.88880 &lt; 2.22e-16</span></span>
+<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a><span class="co">#&gt; group0:main_sss1  1.682350718    0.003919418  1.674668800  1.69003 &lt; 2.22e-16</span></span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a><span class="co">#&gt; group1:main_sss1  0.481951763    0.005936670  0.470316104  0.49359 &lt; 2.22e-16</span></span>
+<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a><span class="co">#&gt;                     </span></span>
+<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a><span class="co">#&gt; (Intercept)      ***</span></span>
+<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a><span class="co">#&gt; group1           ***</span></span>
+<span id="cb14-23"><a href="#cb14-23" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr1 ***</span></span>
+<span id="cb14-24"><a href="#cb14-24" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr1 ***</span></span>
+<span id="cb14-25"><a href="#cb14-25" tabindex="-1"></a><span class="co">#&gt; group0:main_sss1 ***</span></span>
+<span id="cb14-26"><a href="#cb14-26" tabindex="-1"></a><span class="co">#&gt; group1:main_sss1 ***</span></span>
+<span id="cb14-27"><a href="#cb14-27" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb14-28"><a href="#cb14-28" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
+<span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a><span class="co">#&gt; Transformed coefficients:</span></span>
+<span id="cb14-31"><a href="#cb14-31" tabindex="-1"></a><span class="co">#&gt;                    estimate standard.error     lower.CI upper.CI    p.value    </span></span>
+<span id="cb14-32"><a href="#cb14-32" tabindex="-1"></a><span class="co">#&gt; (Intercept)     4.998454142    0.003463730  4.991665356  5.00524 &lt; 2.22e-16 ***</span></span>
+<span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a><span class="co">#&gt; [group=1]      -1.002150001    0.005937109 -1.013786521 -0.99051 &lt; 2.22e-16 ***</span></span>
+<span id="cb14-34"><a href="#cb14-34" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp1  2.000409408    0.004275553  1.992029478  2.00879 &lt; 2.22e-16 ***</span></span>
+<span id="cb14-35"><a href="#cb14-35" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp1  1.000398004    0.006379631  0.987894156  1.01290 &lt; 2.22e-16 ***</span></span>
+<span id="cb14-36"><a href="#cb14-36" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr1  0.999134804    0.001439122  0.996314177  1.00196 &lt; 2.22e-16 ***</span></span>
+<span id="cb14-37"><a href="#cb14-37" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr1  0.502662067    0.005739524  0.491412807  0.51391 &lt; 2.22e-16 ***</span></span>
+<span id="cb14-38"><a href="#cb14-38" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb14-39"><a href="#cb14-39" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span></code></pre></div>
+<p>The summary statistics for dispersion and zero-inflation models will
+also be provided by the <code>summary()</code> function, if the original
+<code>cglmm</code> object being analysed contains them. The following
+demonstration uses the model specified in the <strong>Dispersion and
+Zero-inflation model specification</strong> section of this
+vignette:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">summary</span>(object_disp_zi)</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="co">#&gt;  Conditional Model </span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co">#&gt; Raw model coefficients:</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co">#&gt;                      estimate standard.error     lower.CI upper.CI    p.value</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co">#&gt; (Intercept)       7.014211141    0.031116417  6.953224084  7.07520 &lt; 2.22e-16</span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt; group1           -2.578312220    0.045299524 -2.667097655 -2.48953 &lt; 2.22e-16</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr1  0.077957100    0.043764616 -0.007819970  0.16373 0.07486648</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr1  1.086972288    0.046248079  0.996327718  1.17762 &lt; 2.22e-16</span></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co">#&gt; group0:main_sss1  0.114434603    0.044354815  0.027500763  0.20137 0.00988056</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="co">#&gt; group1:main_sss1  1.696318636    0.046944800  1.604308520  1.78833 &lt; 2.22e-16</span></span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr2  0.088706053    0.044349903  0.001781840  0.17563 0.04548506</span></span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr2  0.094337263    0.046965931  0.002285730  0.18639 0.04457620</span></span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="co">#&gt; group0:main_sss2  0.445765675    0.043697644  0.360119866  0.53141 &lt; 2.22e-16</span></span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="co">#&gt; group1:main_sss2 -1.022002787    0.046246369 -1.112644004 -0.93136 &lt; 2.22e-16</span></span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr3  0.573119340    0.044264219  0.486363064  0.65988 &lt; 2.22e-16</span></span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr3  0.178525448    0.046806455  0.086786482  0.27026 0.00013667</span></span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="co">#&gt; group0:main_sss3 -0.007249692    0.044073464 -0.093632095  0.07913 0.86934456</span></span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="co">#&gt; group1:main_sss3 -0.326731833    0.046648014 -0.418160261 -0.23530 2.4841e-12</span></span>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a><span class="co">#&gt;                     </span></span>
+<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a><span class="co">#&gt; (Intercept)      ***</span></span>
+<span id="cb15-22"><a href="#cb15-22" tabindex="-1"></a><span class="co">#&gt; group1           ***</span></span>
+<span id="cb15-23"><a href="#cb15-23" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr1 .  </span></span>
+<span id="cb15-24"><a href="#cb15-24" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr1 ***</span></span>
+<span id="cb15-25"><a href="#cb15-25" tabindex="-1"></a><span class="co">#&gt; group0:main_sss1 ** </span></span>
+<span id="cb15-26"><a href="#cb15-26" tabindex="-1"></a><span class="co">#&gt; group1:main_sss1 ***</span></span>
+<span id="cb15-27"><a href="#cb15-27" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr2 *  </span></span>
+<span id="cb15-28"><a href="#cb15-28" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr2 *  </span></span>
+<span id="cb15-29"><a href="#cb15-29" tabindex="-1"></a><span class="co">#&gt; group0:main_sss2 ***</span></span>
+<span id="cb15-30"><a href="#cb15-30" tabindex="-1"></a><span class="co">#&gt; group1:main_sss2 ***</span></span>
+<span id="cb15-31"><a href="#cb15-31" tabindex="-1"></a><span class="co">#&gt; group0:main_rrr3 ***</span></span>
+<span id="cb15-32"><a href="#cb15-32" tabindex="-1"></a><span class="co">#&gt; group1:main_rrr3 ***</span></span>
+<span id="cb15-33"><a href="#cb15-33" tabindex="-1"></a><span class="co">#&gt; group0:main_sss3    </span></span>
+<span id="cb15-34"><a href="#cb15-34" tabindex="-1"></a><span class="co">#&gt; group1:main_sss3 ***</span></span>
+<span id="cb15-35"><a href="#cb15-35" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb15-36"><a href="#cb15-36" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
+<span id="cb15-37"><a href="#cb15-37" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-38"><a href="#cb15-38" tabindex="-1"></a><span class="co">#&gt; Transformed coefficients:</span></span>
+<span id="cb15-39"><a href="#cb15-39" tabindex="-1"></a><span class="co">#&gt;                   estimate standard.error    lower.CI upper.CI    p.value    </span></span>
+<span id="cb15-40"><a href="#cb15-40" tabindex="-1"></a><span class="co">#&gt; (Intercept)     7.01421114     0.03111642  6.95322408  7.07520 &lt; 2.22e-16 ***</span></span>
+<span id="cb15-41"><a href="#cb15-41" tabindex="-1"></a><span class="co">#&gt; [group=1]      -2.57831222     0.04529952 -2.66709765 -2.48953 &lt; 2.22e-16 ***</span></span>
+<span id="cb15-42"><a href="#cb15-42" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp1  0.13846511     0.04397570  0.05227432  0.22466  0.0016401 ** </span></span>
+<span id="cb15-43"><a href="#cb15-43" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp1  2.01469741     0.04635784  1.92383773  2.10556 &lt; 2.22e-16 ***</span></span>
+<span id="cb15-44"><a href="#cb15-44" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp2  0.45450611     0.04385311  0.36855558  0.54046 &lt; 2.22e-16 ***</span></span>
+<span id="cb15-45"><a href="#cb15-45" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp2  1.02634751     0.04618621  0.93582421  1.11687 &lt; 2.22e-16 ***</span></span>
+<span id="cb15-46"><a href="#cb15-46" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp3  0.57316519     0.04426686  0.48640374  0.65993 &lt; 2.22e-16 ***</span></span>
+<span id="cb15-47"><a href="#cb15-47" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp3  0.37232382     0.04672082  0.28075269  0.46389 1.5981e-15 ***</span></span>
+<span id="cb15-48"><a href="#cb15-48" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr1  0.97277420     0.31882068  0.34789715  1.59765  0.0022796 ** </span></span>
+<span id="cb15-49"><a href="#cb15-49" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr1  1.00092780     0.02324737  0.95536379  1.04649 &lt; 2.22e-16 ***</span></span>
+<span id="cb15-50"><a href="#cb15-50" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr2  1.37436533     0.09724001  1.18377840  1.56495 &lt; 2.22e-16 ***</span></span>
+<span id="cb15-51"><a href="#cb15-51" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr2 -1.47875089     0.04581791 -1.56855234 -1.38895 &lt; 2.22e-16 ***</span></span>
+<span id="cb15-52"><a href="#cb15-52" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr3 -0.01264886     0.07689025 -0.16335098  0.13805  0.8693333    </span></span>
+<span id="cb15-53"><a href="#cb15-53" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr3 -1.07072318     0.12551917 -1.31673624 -0.82471 &lt; 2.22e-16 ***</span></span>
+<span id="cb15-54"><a href="#cb15-54" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb15-55"><a href="#cb15-55" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
+<span id="cb15-56"><a href="#cb15-56" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-57"><a href="#cb15-57" tabindex="-1"></a><span class="co">#&gt; ***********************</span></span>
+<span id="cb15-58"><a href="#cb15-58" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-59"><a href="#cb15-59" tabindex="-1"></a><span class="co">#&gt;  Dispersion Model </span></span>
+<span id="cb15-60"><a href="#cb15-60" tabindex="-1"></a><span class="co">#&gt; Raw model coefficients:</span></span>
+<span id="cb15-61"><a href="#cb15-61" tabindex="-1"></a><span class="co">#&gt;                      estimate standard.error     lower.CI upper.CI  p.value  </span></span>
+<span id="cb15-62"><a href="#cb15-62" tabindex="-1"></a><span class="co">#&gt; (Intercept)      -0.036759654    0.044775633 -0.124518283  0.05100 0.411661  </span></span>
+<span id="cb15-63"><a href="#cb15-63" tabindex="-1"></a><span class="co">#&gt; group1            0.112946788    0.063324547 -0.011167044  0.23706 0.074486 .</span></span>
+<span id="cb15-64"><a href="#cb15-64" tabindex="-1"></a><span class="co">#&gt; group0:disp_rrr1  0.023008307    0.063043760 -0.100555192  0.14657 0.715143  </span></span>
+<span id="cb15-65"><a href="#cb15-65" tabindex="-1"></a><span class="co">#&gt; group1:disp_rrr1  0.108335659    0.063221994 -0.015577171  0.23225 0.086607 .</span></span>
+<span id="cb15-66"><a href="#cb15-66" tabindex="-1"></a><span class="co">#&gt; group0:disp_sss1 -0.110444247    0.063881792 -0.235650259  0.01476 0.083830 .</span></span>
+<span id="cb15-67"><a href="#cb15-67" tabindex="-1"></a><span class="co">#&gt; group1:disp_sss1 -0.011991094    0.063791525 -0.137020186  0.11304 0.850898  </span></span>
+<span id="cb15-68"><a href="#cb15-68" tabindex="-1"></a><span class="co">#&gt; group0:disp_rrr2  0.002712229    0.063137599 -0.121035191  0.12646 0.965735  </span></span>
+<span id="cb15-69"><a href="#cb15-69" tabindex="-1"></a><span class="co">#&gt; group1:disp_rrr2 -0.003042053    0.063777602 -0.128043856  0.12196 0.961957  </span></span>
+<span id="cb15-70"><a href="#cb15-70" tabindex="-1"></a><span class="co">#&gt; group0:disp_sss2  0.024316783    0.063998788 -0.101118536  0.14975 0.703977  </span></span>
+<span id="cb15-71"><a href="#cb15-71" tabindex="-1"></a><span class="co">#&gt; group1:disp_sss2  0.007340058    0.063413150 -0.116947432  0.13163 0.907851  </span></span>
+<span id="cb15-72"><a href="#cb15-72" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb15-73"><a href="#cb15-73" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
+<span id="cb15-74"><a href="#cb15-74" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-75"><a href="#cb15-75" tabindex="-1"></a><span class="co">#&gt; Transformed coefficients:</span></span>
+<span id="cb15-76"><a href="#cb15-76" tabindex="-1"></a><span class="co">#&gt;                     estimate standard.error      lower.CI upper.CI  p.value  </span></span>
+<span id="cb15-77"><a href="#cb15-77" tabindex="-1"></a><span class="co">#&gt; (Intercept)     -0.036759654    0.044775633  -0.124518283  0.05100 0.411661  </span></span>
+<span id="cb15-78"><a href="#cb15-78" tabindex="-1"></a><span class="co">#&gt; [group=1]        0.112946788    0.063324547  -0.011167044  0.23706 0.074486 .</span></span>
+<span id="cb15-79"><a href="#cb15-79" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp1   0.112815398    0.064164440  -0.012944594  0.23858 0.078710 .</span></span>
+<span id="cb15-80"><a href="#cb15-80" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp1   0.108997254    0.063387162  -0.015239300  0.23323 0.085515 .</span></span>
+<span id="cb15-81"><a href="#cb15-81" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp2   0.024467572    0.063906046  -0.100785975  0.14972 0.701818  </span></span>
+<span id="cb15-82"><a href="#cb15-82" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp2   0.007945473    0.062760735  -0.115063308  0.13095 0.899257  </span></span>
+<span id="cb15-83"><a href="#cb15-83" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr1  -1.365408841    0.556272157  -2.455682233 -0.27514 0.014105 *</span></span>
+<span id="cb15-84"><a href="#cb15-84" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr1  -0.110235938    0.583752383  -1.254369584  1.03390 0.850218  </span></span>
+<span id="cb15-85"><a href="#cb15-85" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr2   1.459718085    2.584296758  -3.605410486  6.52485 0.572182  </span></span>
+<span id="cb15-86"><a href="#cb15-86" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr2   1.963693306    8.107726215 -13.927158072 17.85454 0.808625  </span></span>
+<span id="cb15-87"><a href="#cb15-87" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb15-88"><a href="#cb15-88" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
+<span id="cb15-89"><a href="#cb15-89" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-90"><a href="#cb15-90" tabindex="-1"></a><span class="co">#&gt; ***********************</span></span>
+<span id="cb15-91"><a href="#cb15-91" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-92"><a href="#cb15-92" tabindex="-1"></a><span class="co">#&gt;  Zero-Inflation Model </span></span>
+<span id="cb15-93"><a href="#cb15-93" tabindex="-1"></a><span class="co">#&gt; Raw model coefficients:</span></span>
+<span id="cb15-94"><a href="#cb15-94" tabindex="-1"></a><span class="co">#&gt;                     estimate standard.error      lower.CI upper.CI p.value</span></span>
+<span id="cb15-95"><a href="#cb15-95" tabindex="-1"></a><span class="co">#&gt; (Intercept)    -2.266473e+01   2.644921e+03 -5.206615e+03 5161.286 0.99316</span></span>
+<span id="cb15-96"><a href="#cb15-96" tabindex="-1"></a><span class="co">#&gt; group1         -4.042221e-01   4.186432e+03 -8.205661e+03 8204.853 0.99992</span></span>
+<span id="cb15-97"><a href="#cb15-97" tabindex="-1"></a><span class="co">#&gt; group0:zi_rrr1 -1.397969e-02   3.797417e+03 -7.442815e+03 7442.787 1.00000</span></span>
+<span id="cb15-98"><a href="#cb15-98" tabindex="-1"></a><span class="co">#&gt; group1:zi_rrr1  1.342566e-02   4.648395e+03 -9.110673e+03 9110.699 1.00000</span></span>
+<span id="cb15-99"><a href="#cb15-99" tabindex="-1"></a><span class="co">#&gt; group0:zi_sss1 -3.632683e-02   3.813723e+03 -7.474795e+03 7474.723 0.99999</span></span>
+<span id="cb15-100"><a href="#cb15-100" tabindex="-1"></a><span class="co">#&gt; group1:zi_sss1  3.754903e-02   4.661630e+03 -9.136589e+03 9136.664 0.99999</span></span>
+<span id="cb15-101"><a href="#cb15-101" tabindex="-1"></a><span class="co">#&gt; group0:zi_rrr2  1.577726e-02   3.814210e+03 -7.475698e+03 7475.730 1.00000</span></span>
+<span id="cb15-102"><a href="#cb15-102" tabindex="-1"></a><span class="co">#&gt; group1:zi_rrr2 -1.425301e-02   4.660886e+03 -9.135184e+03 9135.155 1.00000</span></span>
+<span id="cb15-103"><a href="#cb15-103" tabindex="-1"></a><span class="co">#&gt; group0:zi_sss2 -1.774775e-02   3.797224e+03 -7.442440e+03 7442.404 1.00000</span></span>
+<span id="cb15-104"><a href="#cb15-104" tabindex="-1"></a><span class="co">#&gt; group1:zi_sss2  1.930302e-02   4.638294e+03 -9.090871e+03 9090.909 1.00000</span></span>
+<span id="cb15-105"><a href="#cb15-105" tabindex="-1"></a><span class="co">#&gt; group0:zi_rrr3 -5.619498e-03   3.842736e+03 -7.531630e+03 7531.619 1.00000</span></span>
+<span id="cb15-106"><a href="#cb15-106" tabindex="-1"></a><span class="co">#&gt; group1:zi_rrr3  6.036528e-03   4.695205e+03 -9.202427e+03 9202.439 1.00000</span></span>
+<span id="cb15-107"><a href="#cb15-107" tabindex="-1"></a><span class="co">#&gt; group0:zi_sss3 -1.783534e-03   3.652165e+03 -7.158113e+03 7158.109 1.00000</span></span>
+<span id="cb15-108"><a href="#cb15-108" tabindex="-1"></a><span class="co">#&gt; group1:zi_sss3  1.667131e-03   4.456883e+03 -8.735328e+03 8735.332 1.00000</span></span>
+<span id="cb15-109"><a href="#cb15-109" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-110"><a href="#cb15-110" tabindex="-1"></a><span class="co">#&gt; Transformed coefficients:</span></span>
+<span id="cb15-111"><a href="#cb15-111" tabindex="-1"></a><span class="co">#&gt;                     estimate standard.error      lower.CI    upper.CI p.value</span></span>
+<span id="cb15-112"><a href="#cb15-112" tabindex="-1"></a><span class="co">#&gt; (Intercept)    -2.266473e+01   2.644921e+03 -5.206615e+03    5161.286 0.99316</span></span>
+<span id="cb15-113"><a href="#cb15-113" tabindex="-1"></a><span class="co">#&gt; [group=1]      -4.042221e-01   4.186432e+03 -8.205661e+03    8204.853 0.99992</span></span>
+<span id="cb15-114"><a href="#cb15-114" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp1  3.892390e-02   3.783380e+03 -7.415249e+03    7415.327 0.99999</span></span>
+<span id="cb15-115"><a href="#cb15-115" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp1  3.987704e-02   4.630460e+03 -9.075496e+03    9075.576 0.99999</span></span>
+<span id="cb15-116"><a href="#cb15-116" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp2  2.374667e-02   3.799393e+03 -7.446650e+03    7446.698 1.00000</span></span>
+<span id="cb15-117"><a href="#cb15-117" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp2  2.399490e-02   4.645138e+03 -9.104279e+03    9104.327 1.00000</span></span>
+<span id="cb15-118"><a href="#cb15-118" tabindex="-1"></a><span class="co">#&gt; [group=0]:amp3  5.895740e-03   3.802005e+03 -7.451786e+03    7451.798 1.00000</span></span>
+<span id="cb15-119"><a href="#cb15-119" tabindex="-1"></a><span class="co">#&gt; [group=1]:amp3  6.262507e-03   4.652232e+03 -9.118201e+03    9118.213 1.00000</span></span>
+<span id="cb15-120"><a href="#cb15-120" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr1 -1.938158e+00   9.833671e+04 -1.927383e+05  192734.466 0.99998</span></span>
+<span id="cb15-121"><a href="#cb15-121" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr1  1.227411e+00   1.173468e+05 -2.299943e+05  229996.796 0.99999</span></span>
+<span id="cb15-122"><a href="#cb15-122" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr2 -8.441074e-01   1.605298e+05 -3.146335e+05  314631.846 1.00000</span></span>
+<span id="cb15-123"><a href="#cb15-123" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr2  2.206821e+00   1.939607e+05 -3.801537e+05  380158.117 0.99999</span></span>
+<span id="cb15-124"><a href="#cb15-124" tabindex="-1"></a><span class="co">#&gt; [group=0]:acr3 -2.834265e+00   6.266471e+05 -1.228209e+06 1228202.841 1.00000</span></span>
+<span id="cb15-125"><a href="#cb15-125" tabindex="-1"></a><span class="co">#&gt; [group=1]:acr3  2.694571e-01   7.188369e+05 -1.408894e+06 1408894.741 1.00000</span></span></code></pre></div>
+<p><em>Note that this dataset was not simulated with consideration of
+dispersion or zero-inflation characteristics, hence the lack of
+significant P-values in the model summary for the dispersion and
+zero-inflation models.</em></p>
+</div>
+<div id="assessing-residual-diagnostics-of-cglmm-regression-models-using-dharma" class="section level2">
+<h2>Assessing residual diagnostics of <code>cglmm</code> regression
+models using DHARMa</h2>
+<p><code>{DHARMa}</code> is an R package used to assess residual
+diagnostics of regression models fit using <code>{glmmTMB}</code> (which
+is what is used by <code>cglmm()</code>).</p>
+<p>For example, we can apply the functions from <code>DHARMa</code> on
+the <code>glmmTMB</code> model within by accessing it with
+<code>$fit</code>.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">library</span>(DHARMa)</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="co">#&gt; This is DHARMa 0.4.6. For overview type &#39;?DHARMa&#39;. For recent changes, type news(package = &#39;DHARMa&#39;)</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="fu">plotResiduals</span>(<span class="fu">simulateResiduals</span>(object<span class="sc">$</span>fit))</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">plotQQunif</span>(<span class="fu">simulateResiduals</span>(object<span class="sc">$</span>fit))</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
