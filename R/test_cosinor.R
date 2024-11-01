@@ -86,7 +86,7 @@ test_cosinor_components <- function(x,
 
 
   assertthat::assert_that(
-    comparison_A %in% 1:x$n_components & comparison_B %in% 1:x$n_components,
+    comparison_A %in% seq_len(x$n_components) & comparison_B %in% seq_len(x$n_components),
     msg = paste(
       "'comparison_A' and 'comparison_B' must be numbers",
       "corresponding to a component in the model"
@@ -375,7 +375,17 @@ test_cosinor_levels <- function(x,
     }
   }
 
-  diff.est <- index %*% x$coefficients
+  if (param == "acr") {
+    # get the smallest valid difference between estimates for acrophase
+    # (ie, -pi, and pi should have a difference of 0, not 2*pi)
+    diff_raw <- index %*% x$coefficients
+    diff.est_c <- c(abs(diff_raw), abs(diff_raw + 2 * pi), abs(diff_raw - 2 * pi))
+    min_index <- which.min(diff.est_c)
+    diff.est <- as.matrix(diff.est_c[min_index])
+  } else {
+    diff.est <- index %*% x$coefficients
+  }
+
   diff.var <- index[
     , grep("(amp|acr)", names(x$coefficients)),
     drop = FALSE

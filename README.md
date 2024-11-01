@@ -1,10 +1,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# GLMMcosinor <a href='https://ropensci.github.io/GLMMcosinor/'><img src='man/figures/logo.png' align="right" height="139" /></a>
+# GLMMcosinor <a href='https://docs.ropensci.org/GLMMcosinor/'><img src='man/figures/logo.png' align="right" height="139" /></a>
 
 <!-- badges: start -->
 
+[![cranlogs](https://www.r-pkg.org/badges/version/GLMMcosinor)](https://CRAN.R-project.org/package=GLMMcosinor)
 [![R-CMD-check](https://github.com/ropensci/GLMMcosinor/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci/GLMMcosinor/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/ropensci/GLMMcosinor/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ropensci/GLMMcosinor?branch=main)
@@ -18,26 +19,30 @@ Review](https://badges.ropensci.org/603_status.svg)](https://github.com/ropensci
 <!-- badges: end -->
 
 The goal of `{GLMMcosinor}` is to fit a cosinor model to rhythmic data
-except with all the flexibility and functionality of a generalised
-linear (mixed-) model (GLM) framework using `{glmmTMB}`.
+with all the flexibility and functionality of a generalized linear
+(mixed-) model (GLM) framework using `{glmmTMB}`.
+
+The package is also accessible via a [web
+app](https://aushsi.shinyapps.io/GLMMcosinor-shinyapp) developed using
+shiny.
 
 For an introduction to the cosinor model, see the [getting started
-vignette](https://ropensci.github.io/GLMMcosinor/articles/GLMMcosinor.html).
+vignette](https://docs.ropensci.org/GLMMcosinor/articles/GLMMcosinor.html).
 
 Existing statistical software for circadian data analyses (including
-`cosinor` (Sachs 2023) or `circacompare` (Parsons et al. 2020)) allow
-the user to fit data using a regression model, but many are limited due
-to their inability to specify a link function, multiple components, or a
-hierarchical structure. `GLMMcosinor` aims to be comprehensive and
-flexible and is an improvement on other implementations of the cosinor
-model in R or Python. See table below for features available within
+`cosinor` (Sachs 2023) or `circacompare` (Parsons et al. 2020)) allows
+users to fit regression models to rhythmic data, but many are limited
+due to their inability to specify a link function, multiple components,
+or a hierarchical structure. `GLMMcosinor` aims to be comprehensive and
+flexible and is an improvement on other implementations of cosinor model
+fitting in R or Python. See table below for features available within
 currently available methods.
 
 `GLMMcosinor` makes use of the `glmmTMB` package framework for
-estimation of linear cosinor coefficients. If the model has no random
-effects, `glmmTMB` uses maximum likelihood estimation to estimate the
-linear coefficients of the model. For models with random effects, a
-Laplace approximation is used to integrate over the random effects. This
+estimation of the cosinor model. If the model has no random effects,
+`glmmTMB` uses maximum likelihood estimation to estimate the linear
+coefficients of the model. For models with random effects, a Laplace
+approximation is used to integrate over the random effects. This
 approximation is handled by the
 [`TMB`](https://cran.r-project.org/package=TMB) package which uses
 automatic differentiation of the joint likelihood function to
@@ -78,23 +83,23 @@ summary(model)
 #>  Conditional Model 
 #> Raw model coefficients:
 #>                estimate standard.error   lower.CI upper.CI    p.value    
-#> (Intercept)  29.6897959      0.4583696 28.7914079 30.58818 < 2.22e-16 ***
-#> X1            1.9018623      0.7919688  0.3496320  3.45409   0.016331 *  
-#> X0:main_rrr1  0.9307876      0.6260656 -0.2962784  2.15785   0.137087    
-#> X1:main_rrr1  6.5102900      0.9303406  4.6868560  8.33372 2.6011e-12 ***
-#> X0:main_sss1  6.2009896      0.6701952  4.8874311  7.51455 < 2.22e-16 ***
-#> X1:main_sss1  4.8184618      0.8963299  3.0616875  6.57524 7.6257e-08 ***
+#> (Intercept)  29.6897986      0.4583696 28.7914106 30.58819 < 2.22e-16 ***
+#> X1            1.9018605      0.7919688  0.3496302  3.45409   0.016331 *  
+#> X0:main_rrr1  0.9307837      0.6260656 -0.2962822  2.15785   0.137089    
+#> X1:main_rrr1  6.5102912      0.9303406  4.6868572  8.33373 2.6010e-12 ***
+#> X0:main_sss1  6.2009927      0.6701952  4.8874342  7.51455 < 2.22e-16 ***
+#> X1:main_sss1  4.8184563      0.8963299  3.0616821  6.57523 7.6259e-08 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> Transformed coefficients:
 #>                estimate standard.error    lower.CI upper.CI    p.value    
-#> (Intercept) 29.68979587     0.45836964 28.79140787 30.58818 < 2.22e-16 ***
-#> [X=1]        1.90186227     0.79196879  0.34963197  3.45409   0.016331 *  
-#> [X=0]:amp1   6.27045757     0.66965642  4.95795510  7.58296 < 2.22e-16 ***
-#> [X=1]:amp1   8.09947222     0.89570576  6.34392119  9.85502 < 2.22e-16 ***
-#> [X=0]:acr1   1.42180558     0.09993559  1.22593542  1.61768 < 2.22e-16 ***
-#> [X=1]:acr1   0.63715441     0.11493853  0.41187902  0.86243 2.9659e-08 ***
+#> (Intercept) 29.68979858     0.45836964 28.79141059 30.58819 < 2.22e-16 ***
+#> [X=1]        1.90186054     0.79196879  0.34963023  3.45409   0.016331 *  
+#> [X=0]:amp1   6.27046001     0.66965643  4.95795753  7.58296 < 2.22e-16 ***
+#> [X=1]:amp1   8.09946996     0.89570579  6.34391887  9.85502 < 2.22e-16 ***
+#> [X=0]:acr1   1.42180626     0.09993555  1.22593618  1.61768 < 2.22e-16 ***
+#> [X=1]:acr1   0.63715378     0.11493856  0.41187833  0.86243  2.966e-08 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
@@ -113,26 +118,26 @@ citation("GLMMcosinor")
 #> To cite package 'GLMMcosinor' in publications use:
 #> 
 #>   Parsons R, Jayasinghe O, White N, Rawashdeh O (2024). _GLMMcosinor:
-#>   Fit a Cosinor Model Using a Generalised Mixed Modelling Framework_. R
-#>   package version 0.2.0, https://ropensci.github.io/GLMMcosinor/,
+#>   Fit a Cosinor Model Using a Generalized Mixed Modeling Framework_. R
+#>   package version 0.2.1, https://docs.ropensci.org/GLMMcosinor/,
 #>   <https://github.com/ropensci/GLMMcosinor>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
-#>     title = {GLMMcosinor: Fit a Cosinor Model Using a Generalised Mixed Modelling
-#> Framework},
+#>     title = {GLMMcosinor: Fit a Cosinor Model Using a Generalized Mixed Modeling Framework},
 #>     author = {Rex Parsons and Oliver Jayasinghe and Nicole White and Oliver Rawashdeh},
 #>     year = {2024},
-#>     note = {R package version 0.2.0, 
-#> https://ropensci.github.io/GLMMcosinor/},
+#>     note = {R package version 0.2.1, 
+#> https://docs.ropensci.org/GLMMcosinor/},
 #>     url = {https://github.com/ropensci/GLMMcosinor},
 #>   }
 ```
 
 ## References
 
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent"
+entry-spacing="0">
 
 <div id="ref-Kristensen2016TMB" class="csl-entry">
 

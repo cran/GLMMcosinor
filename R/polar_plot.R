@@ -21,7 +21,7 @@
 #' create quadrants around the origin. Defaults to 8.
 #' @param radial_units A \code{character} specifying the angular units of the
 #' plot. Possible values are one of \code{c('radians', 'degrees', 'period')}.
-#' These units relate to the period of the component being visualised.
+#' These units relate to the period of the component being visualized.
 #' \describe{
 #'   \item{\code{'radians'}: \eqn{[0, 2\pi]}}{}
 #'   \item{\code{'degrees'}: \eqn{[0, 360]}}{}
@@ -33,11 +33,11 @@
 #' Defaults to 3.
 #' @param text_opacity A \code{numeric} between 0 and 1 inclusive that
 #' controls the opacity of the text labels.
-#' @param fill_colours A \code{character} vector containing colours that will
+#' @param fill_colors A \code{character} vector containing colors that will
 #' be mapped to levels within a group. If the model has components with
 #' different number of levels per factor, the length of this input should match
 #' the greatest number of levels. If not, or if the number of levels exceeds the
-#' length of the default argument (8), colours are generated using
+#' length of the default argument (8), colors are generated using
 #' \code{rainbow()}.
 #' @param ellipse_opacity A \code{numeric} between 0 and 1 inclusive that
 #' controls the opacity of the confidence ellipses. Defaults to 0.3.
@@ -91,7 +91,7 @@ polar_plot <- function(x,
                        clockwise = FALSE,
                        text_size = 3,
                        text_opacity = 0.5,
-                       fill_colours,
+                       fill_colors,
                        ellipse_opacity = 0.3,
                        circle_linetype = "dotted",
                        start = c("right", "left", "top", "bottom"),
@@ -128,7 +128,7 @@ polar_plot <- function(x,
 #' create quadrants around the origin. Defaults to 8.
 #' @param radial_units A \code{character} specifying the angular units of the
 #' plot. Possible values are one of \code{c('radians', 'degrees', 'period')}.
-#' These units relate to the period of the component being visualised.
+#' These units relate to the period of the component being visualized.
 #' \describe{
 #'   \item{\code{'radians'}: \eqn{[0, 2\pi]}}{}
 #'   \item{\code{'degrees'}: \eqn{[0, 360]}}{}
@@ -140,11 +140,11 @@ polar_plot <- function(x,
 #' Defaults to 3.
 #' @param text_opacity A \code{numeric} between 0 and 1 inclusive that
 #' controls the opacity of the text labels.
-#' @param fill_colours A \code{character} vector containing colours that will
+#' @param fill_colors A \code{character} vector containing colors that will
 #' be mapped to levels within a group. If the model has components with
 #' different number of levels per factor, the length of this input should match
 #' the greatest number of levels. If not, or if the number of levels exceeds the
-#' length of the default argument (8), colours are generated using
+#' length of the default argument (8), colors are generated using
 #' \code{rainbow()}.
 #' @param ellipse_opacity A \code{numeric} between 0 and 1 inclusive that
 #' controls the opacity of the confidence ellipses. Defaults to 0.3.
@@ -201,7 +201,7 @@ polar_plot.cglmm <- function(x,
                              clockwise = FALSE,
                              text_size = 3.5,
                              text_opacity = 1,
-                             fill_colours,
+                             fill_colors,
                              ellipse_opacity = 0.3,
                              circle_linetype = "dotted",
                              start = c(
@@ -335,7 +335,7 @@ polar_plot.cglmm <- function(x,
   # check if there is a contour argument & store this check in local environment
   n_components <- x$n_components
 
-  fill_colours_check <- !missing(fill_colours)
+  fill_colors_check <- !missing(fill_colors)
   # set direction of increasing angle based on user input of clockwise argument
   direction <- ifelse(clockwise, -1, 1)
 
@@ -366,6 +366,10 @@ polar_plot.cglmm <- function(x,
     make_cowplot <- TRUE
   }
 
+  # remove component labels if there is only one component
+  if (n_components == 1) {
+    show_component_labels <- FALSE
+  }
 
   # get ggplot for a single component. Function will then be looped for
   # multiple components
@@ -423,7 +427,7 @@ polar_plot.cglmm <- function(x,
     if (group_check) {
       for (i in level) {
         group_ind <- paste0(group, "=", i)
-        group_level[which(grepl(group_ind, name_index))] <- paste(group, "=", i)
+        group_level[which(grepl(group_ind, name_index))] <- paste(i)
       }
     }
 
@@ -628,21 +632,39 @@ polar_plot.cglmm <- function(x,
                                         ellipse_opacity, # 0 to 1, alpha value
                                         plot_background # the plot to layer upon
     ) {
-      plot_estimate <- plot_background + ggforce::geom_ellipse( # plots the confidence ellipse
-        ggplot2::aes(
-          x0 = est_rrr,
-          y0 = est_sss,
-          a = a_trans,
-          b = b_trans,
-          angle = offset + direction * est_acr,
-          fill = group_level,
-          colour = group_level
-        ),
-        alpha = ellipse_opacity
-      ) +
-        ggplot2::geom_point( # plots the parameter estimates
-          ggplot2::aes(x = est_rrr, y = est_sss)
-        )
+      if (group_check) {
+        plot_estimate <- plot_background + ggforce::geom_ellipse( # plots the confidence ellipse
+          ggplot2::aes(
+            x0 = est_rrr,
+            y0 = est_sss,
+            a = a_trans,
+            b = b_trans,
+            angle = offset + direction * est_acr,
+            fill = group_level,
+            colour = group_level
+          ),
+          alpha = ellipse_opacity
+        ) +
+          ggplot2::geom_point( # plots the parameter estimates
+            ggplot2::aes(x = est_rrr, y = est_sss)
+          )
+      } else {
+        plot_estimate <- plot_background + ggforce::geom_ellipse( # plots the confidence ellipse
+          ggplot2::aes(
+            x0 = est_rrr,
+            y0 = est_sss,
+            a = a_trans,
+            b = b_trans,
+            angle = offset + direction * est_acr,
+            fill = grDevices::rainbow(group_level_colour_index),
+            colour = grDevices::rainbow(group_level_colour_index)
+          ),
+          alpha = ellipse_opacity
+        ) + ggplot2::theme(legend.position = "none") +
+          ggplot2::geom_point( # plots the parameter estimates
+            ggplot2::aes(x = est_rrr, y = est_sss)
+          )
+      }
       return(plot_estimate)
     }
     plot_obj <- get_point_estimate_plot(
@@ -658,9 +680,8 @@ polar_plot.cglmm <- function(x,
       plot_background
     )
 
-
     if (x$group_check) {
-      plot_obj <- plot_obj + ggplot2::labs(fill = "levels", colour = NULL)
+      plot_obj <- plot_obj + ggplot2::labs(fill = x_str, colour = NULL)
     }
     # OPTIONAL: overlays lines connecting the parameter estimates to the
     # origin, and displays estimates in plot
@@ -705,11 +726,11 @@ polar_plot.cglmm <- function(x,
     }
 
 
-    # apply colours chosen by user input to the fill and colour aesthetics
-    if (fill_colours_check) {
+    # apply colors chosen by user input to the fill and colour aesthetics
+    if (fill_colors_check) {
       plot_obj <- plot_obj +
         ggplot2::scale_fill_manual(
-          values = fill_colours,
+          values = fill_colors,
           aesthetics = c("fill", "colour")
         )
     } else {
@@ -778,7 +799,7 @@ polar_plot.cglmm <- function(x,
   # plot multiple component plots in cowplot or plot a single component plot
   if (make_cowplot == TRUE & n_components > 1) {
     plot_list <- NULL
-    for (i in 1:n_components) {
+    for (i in seq_len(n_components)) {
       plot_obj <- sub_ggplot.cglmm.polar(i)
       assign(paste0("plot_obj", i), plot_obj)
 
@@ -797,7 +818,7 @@ polar_plot.cglmm <- function(x,
   }
   if (make_cowplot == TRUE & n_components == 1) {
     plot_list <- NULL
-    for (i in 1:n_components) {
+    for (i in seq_len(n_components)) {
       plot_obj <- sub_ggplot.cglmm.polar(i)
       assign(paste0("plot_obj", i), plot_obj)
       # show labels for each component

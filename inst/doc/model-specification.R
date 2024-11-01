@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
 #  #' @srrstats {G2.1a}
 #  #' @srrstats {RE1.1}
 
-## ----setup--------------------------------------------------------------------
+## ----setup, message=FALSE-----------------------------------------------------
 library(GLMMcosinor)
 library(dplyr)
 

@@ -4,10 +4,9 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ----echo=F-------------------------------------------------------------------
-library(GLMMcosinor)
+## ----echo=F, message=FALSE----------------------------------------------------
 withr::with_seed(42, {
-  testdata_two_components <- simulate_cosinor(
+  testdata_two_components <- GLMMcosinor::simulate_cosinor(
     1000,
     n_period = 2,
     mesor = 1,
@@ -21,7 +20,7 @@ withr::with_seed(42, {
     n_components = 2
   )
 
-  testdata_period_diff <- simulate_cosinor(
+  testdata_period_diff <- GLMMcosinor::simulate_cosinor(
     1000,
     n_period = 1,
     mesor = 7,
@@ -55,7 +54,7 @@ object <- cglmm(
 )
 autoplot(object, x_str = "X", superimpose.data = TRUE)
 
-## ----echo=F-------------------------------------------------------------------
+## ----echo=F, message=F--------------------------------------------------------
 testdata_two_components <- simulate_cosinor(
   1000,
   n_period = 2,

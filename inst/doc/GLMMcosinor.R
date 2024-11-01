@@ -9,10 +9,6 @@ knitr::opts_chunk$set(
 #  #' @srrstats {G1.1}
 #  #' @srrstats {G1.3}
 
-## ----echo=FALSE, warning=FALSE, message=FALSE---------------------------------
-source("fixtures/methods-table.R")
-dat
-
 ## ----message=F, warning=F-----------------------------------------------------
 library(GLMMcosinor)
 
